@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fac4b94d7024a1faf3bf9ecc0de4652, type: 3}
+  m_Name: BubbleData
+  m_EditorClassIdentifier: 
+  colors:
+    m_keys: 0200000004000000080000001000000020000000400000008000000000010000000200000004000000080000
+    m_values:
+    - {r: 0.9568628, g: 0.46274513, b: 0.5647059, a: 1}
+    - {r: 0.9294118, g: 0.3921569, b: 0.21960786, a: 1}
+    - {r: 1, g: 0.7254902, b: 0.16470589, a: 1}
+    - {r: 0.75218964, g: 0, b: 1, a: 1}
+    - {r: 0.43137258, g: 0.73333335, b: 0.3137255, a: 1}
+    - {r: 0.26666668, g: 0.7607844, b: 0.6509804, a: 1}
+    - {r: 0.38431376, g: 0.7176471, b: 0.9294118, a: 1}
+    - {r: 0.40784317, g: 0.5764706, b: 0.8745099, a: 1}
+    - {r: 0.83921576, g: 0.60784316, b: 0.8196079, a: 1}
+    - {r: 0.9339623, g: 0.41852084, b: 0.41852084, a: 1}
+    - {r: 0.43614274, g: 0.9339623, b: 0.7966561, a: 1}
+  magazineScale: 0.8
