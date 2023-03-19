@@ -89,19 +89,19 @@ namespace Managers
                         leftIndex = j;
 
                     // Add top left neighbour
-                    if (i + 1 < rows && j - 1 >= 0)
+                    if (i + 1 < rows && leftIndex >= 0)
                         tile.AddNeighbour(_tiles[i + 1, leftIndex]);
                 
                     // Add top right neighbour
-                    if (i + 1 < rows && j + 1 < columns)
+                    if (i + 1 < rows && rightIndex < columns)
                         tile.AddNeighbour(_tiles[i + 1, rightIndex]);
                 
                     // Add bottom left neighbour
-                    if (i - 1 >= 0 && j - 1 >= 0)
+                    if (i - 1 >= 0 && leftIndex >= 0)
                         tile.AddNeighbour(_tiles[i - 1, leftIndex]);
                 
                     // Add bottom right neighbour
-                    if (i - 1 >= 0 && j + 1 < columns)
+                    if (i - 1 >= 0 && rightIndex < columns)
                         tile.AddNeighbour(_tiles[i - 1, rightIndex]);
                 }
             }

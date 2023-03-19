@@ -12,14 +12,12 @@ namespace Managers
         [SerializeField] private int columns = 10; // Number of columns in the grid
         [SerializeField] private float offset = .5f; 
         [SerializeField] private float cellSize = 1f; // Size of each cell in the grid
-        [SerializeField] private Transform[] magazineSlots;
         private Vector2[,] _cellPositions; // Array to store the positions of each cell in the grid
 
         public int Rows => rows;
 
         public int Columns => columns;
         public Vector2[,] CellPositions => _cellPositions;
-        public Transform[] MagazineSlots => magazineSlots;
 
         private void Start()
         {
@@ -33,7 +31,7 @@ namespace Managers
 
             // Calculate the starting point of the grid based on the center point and the number of rows and columns
             var startX = centerPoint.x - ((columns / 2f) * cellSize) - offset / 2;
-            var startY = centerPoint.y - ((rows / 2f) * cellSize);
+            var startY = centerPoint.y - (rows * cellSize);
 
             // Initialize the cellPositions array with the correct dimensions
             _cellPositions = new Vector2[rows, columns];

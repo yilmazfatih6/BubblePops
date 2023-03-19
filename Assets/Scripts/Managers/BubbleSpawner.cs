@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using Objects;
 using UnityEngine;
-using UnityEngine.Serialization;
+using Utilities;
 using Random = UnityEngine.Random;
 
 namespace Managers
 {
-    public class BubbleSpawner : MonoBehaviour
+    public class BubbleSpawner : SingletonMonoBehaviour<BubbleSpawner>
     {
         [SerializeField] private Bubble bubblePrefab;
         [SerializeField] private int initialRowCount = 3;
         [SerializeField] private int maxExponent = 5;
-        [SerializeField] private Transform[] bubbleSpawnPoints;
         
-        private List<Bubble> _spawmedBubbles = new List<Bubble>();
+        private List<Bubble> _poolBubbles = new List<Bubble>();
+        private List<Bubble> _shotBubbles = new List<Bubble>();
+
+        public Bubble FirstShotBubble => _shotBubbles[0];
 
         #region Init
 
@@ -34,6 +36,29 @@ namespace Managers
 
         private void OnTileSpawnCompleted()
         { 
+            SpawnPoolBubbles();
+            SpawnInitialShotBubbles();
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        // Spawns a new shot bubble and swaps secondary to first
+        public void SpawnNewShotBubble()
+        {
+            _shotBubbles.RemoveAt(0);
+            FirstShotBubble.Move(BubbleShooter.Instance.Magazines[0].position);
+            FirstShotBubble.ResetScale();
+            SpawnShotBubble(1);
+        }
+        
+        #endregion
+
+        #region Private Methods
+
+        private void SpawnPoolBubbles()
+        {
             var rows = GridGenerator.Instance.Rows;
             var columns = GridGenerator.Instance.Columns;
 
@@ -42,32 +67,33 @@ namespace Managers
                 for (int j = 0; j < columns; j++)
                 {
                     Bubble bubble = Lean.Pool.LeanPool.Spawn(bubblePrefab);
-                    _spawmedBubbles.Add(bubble);
+                    _poolBubbles.Add(bubble);
 
                     var tile = TileSpawner.Instance.Tiles[i, j];
             
-                    bubble.InjectData(tile: tile, number: (int)Mathf.Pow(2, Random.Range(1, maxExponent)));
+                    bubble.InjectData(tile: tile, number: Random.Range(1, maxExponent));
                 }
             }
-            
         }
 
-        #endregion
-
-        #region Private Methods
-
-        private void SpawnBubblesToShoot()
+        private void SpawnInitialShotBubbles()
         {
-            for (int i = 0; i < GridGenerator.Instance.MagazineSlots.Length; i++)
+            for (int i = 0; i < BubbleShooter.Instance.Magazines.Length; i++)
             {
-                var bubble = Lean.Pool.LeanPool.Spawn(bubblePrefab);
-                _spawmedBubbles.Add(bubble);
-                var number = (int)Mathf.Pow(2, Random.Range(1, maxExponent));
-                bubble.InjectData(number: number);
-                // bubble.transform.position = bubbleSpawnPoints;
+                SpawnShotBubble(i);
             }
         }
 
+        private void SpawnShotBubble(int index)
+        {
+            var bubble = Lean.Pool.LeanPool.Spawn(bubblePrefab);
+            _shotBubbles.Add(bubble);
+            var number = (int)Random.Range(1, maxExponent);
+            bubble.InjectData(number: number, isColliderActive:false);
+            bubble.SetTransform(BubbleShooter.Instance.Magazines[index], index == 0);
+        }
+
         #endregion
+
     }
 }

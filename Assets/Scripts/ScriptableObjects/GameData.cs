@@ -8,7 +8,8 @@ namespace ScriptableObjects
     public class GameData : SingletonScriptableObject<GameData>
     {
         [SerializeField, InlineEditor()] private BubbleData bubbleData;
-
+        [SerializeField] private float tileOpacity = .25f;
         public BubbleData BubbleData => bubbleData;
+        public float TileOpacity => tileOpacity;
     }
 }
