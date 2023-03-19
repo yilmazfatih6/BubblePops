@@ -83,10 +83,11 @@ namespace Objects
             var index = 1;
             Vector2 dir = barrel.up;
             Vector2 origin = magazines[0].position;
+            RaycastHit2D hit;
             while (true)
             {
                 // Cast a ray straight down.
-                var hit = Physics2D.Raycast(origin, dir, Mathf.Infinity, includeLayers);
+                hit = Physics2D.Raycast(origin, dir, Mathf.Infinity, includeLayers);
                 
                 if (hit.collider != null)
                 {
@@ -116,7 +117,7 @@ namespace Objects
             }
             
             // Get furthest tile index.
-            int hits = Physics2D.RaycastNonAlloc(origin, dir, _results, Mathf.Infinity, tileLayer);
+            int hits = Physics2D.RaycastNonAlloc(origin, dir, _results, Vector2.Distance(origin, hit.point), tileLayer);
             Debug.Log("Hits: " + hits);
             float furthestDistance = -1f;
             int furthestTileIndex = 0;

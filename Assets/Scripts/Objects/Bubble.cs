@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using DG.Tweening;
 using Lean.Pool;
 using ScriptableObjects;
+using Sirenix.OdinInspector;
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Objects
@@ -69,12 +72,6 @@ namespace Objects
             return transform.DOMove(position, distance / GameData.Instance.BubbleData.MovementSpeed);
         }
         
-        public Tween MergeMove(Vector3 position)
-        {
-            var distance = Vector3.Distance(transform.position, position);
-            return transform.DOMove(position, GameData.Instance.BubbleData.MergeDuration);
-        }
-
         public void ResetScale()
         {
             transform.DOScale(_defaultScale, .5f);
@@ -89,30 +86,44 @@ namespace Objects
 
         public void CheckForMerge()
         {
-            var bubbles = new List<Bubble> { this };
-            foreach (var neighbourTile in _tile.Neighbours)
-            {
-                if(neighbourTile.Bubble == null) continue;
-                if(_number != neighbourTile.Bubble._number) continue;
-                if(bubbles.Contains(neighbourTile.Bubble)) continue;
-                
-                bubbles.Add(neighbourTile.Bubble);
-                neighbourTile.Bubble.GetMergeBubbles(bubbles);
-                break;
-            }
-
+            // Get merge bubble and store in a list.
+            var bubbles = new List<Bubble> { this };  
+            GetMergeBubbles(bubbles, _number);
+            
+            // If count is 1 which means there is no merge, return.
             if (bubbles.Count == 1) return;
             
+            // Calculate new number to assign after merge.
+            var newNumber = Mathf.Clamp(_number + bubbles.Count - 1, 
+                GameData.Instance.BubbleData.Colors.First().Key,
+                GameData.Instance.BubbleData.Colors.Last().Key);
+            
+            // Decide on which position to merge at.
+            var positionToMergeAt = Vector3.zero;
+            int maxCount = 0;
+            int bubbleIndex = bubbles.Count - 1;
             for (int i = 0; i < bubbles.Count; i++)
             {
-                var tween = bubbles[i].MergeMove(bubbles[^1].transform.position);
+                var mergeBubbles = new List<Bubble> { this };
+                bubbles[i].GetMergeBubbles(mergeBubbles, newNumber);
+                if (maxCount < mergeBubbles.Count)
+                {
+                    maxCount = mergeBubbles.Count;
+                    bubbleIndex = i;
+                }
+            }
+            
+            // Move each bubble, after movement bump at bubble at merge position and explode others.
+            for (int i = 0; i < bubbles.Count; i++)
+            {
+                var tween = bubbles[i].MergeMove(bubbles[bubbleIndex].transform.position);
 
-                if (i == bubbles.Count - 1)
+                if (i == bubbleIndex)
                 {
                     var index = i;
                     tween.OnComplete(() =>
                     {
-                        bubbles[index].BumpUp();
+                        bubbles[index].BumpUp(newNumber);
                     });
                 }
                 else
@@ -126,48 +137,73 @@ namespace Objects
             }
         }
 
-        private void GetMergeBubbles(List<Bubble> matchedBubbles)
+        private void GetMergeBubbles(List<Bubble> matchedBubbles, int number)
         {
             foreach (var neighbourTile in _tile.Neighbours)
             {
                 if(neighbourTile.Bubble == null) continue;
-                if(_number != neighbourTile.Bubble._number) continue;
+                if(number != neighbourTile.Bubble._number) continue;
                 if(matchedBubbles.Contains(neighbourTile.Bubble)) continue;
                 
                 matchedBubbles.Add(neighbourTile.Bubble);
-                neighbourTile.Bubble.GetMergeBubbles(matchedBubbles);
-                break;
+                neighbourTile.Bubble.GetMergeBubbles(matchedBubbles, number);
             }
-            
-            // isMatched = _number == _number;
-            // if (isMatched)
-            // {
-            //     bubble = neighbourTile.Bubble;
-            // }
-            // if (isMatched)
-            // {
-            //     // Merge
-            //     neighbourTile.Bubble.CheckForMerge();
-            //     Move(neighbourTile.transform.position).OnComplete(() =>
-            //     {
-            //         Explode();
-            //         neighbourTile.Bubble.BumpUp();
-            //     });
-            //
-            //     return;
-            // }
         }
-
-        public void BumpUp()
-        {
-            _number += 1;
-            textMeshPro.text = Mathf.Pow(2, _number).ToString(CultureInfo.InvariantCulture);
-            spriteRenderer.color = GameData.Instance.BubbleData.Colors[_number];
-            CheckForMerge();
-        } 
         #endregion
 
         #region Private Methods
+
+        // private List<Bubble> GetMergeBubbles()
+        // {
+        //     var bubbles = new List<Bubble> { this };
+        //     foreach (var neighbourTile in _tile.Neighbours)
+        //     {
+        //         if(neighbourTile.Bubble == null) continue;
+        //         if(_number != neighbourTile.Bubble._number) continue;
+        //         if(bubbles.Contains(neighbourTile.Bubble)) continue;
+        //         
+        //         bubbles.Add(neighbourTile.Bubble);
+        //         neighbourTile.Bubble.GetMergeBubbles(bubbles);
+        //     }
+        //     return bubbles;
+        // }
+
+        private void BumpUp(int newNumber)
+        {
+            _number = newNumber;
+            textMeshPro.text = Mathf.Pow(2, _number).ToString(CultureInfo.InvariantCulture);
+            spriteRenderer.color = GameData.Instance.BubbleData.Colors[_number];
+            
+            // On max number is reached explode neighbours and self
+            if (_number == GameData.Instance.BubbleData.Colors.Last().Key)
+            {
+                Explode();
+                foreach (var neighbour in _tile.Neighbours)
+                {
+                    if (neighbour.Bubble)
+                    {
+                        neighbour.Bubble.Explode();
+                    }
+                }
+            }
+            else
+            {
+                // Else check for merge
+                CheckForMerge();
+            }
+        }
+
+        [Button]
+        private void Debug_Bump()
+        {
+            BumpUp(_number + 1);
+        }
+
+        private Tween MergeMove(Vector3 position)
+        {
+            var distance = Vector3.Distance(transform.position, position);
+            return transform.DOMove(position, GameData.Instance.BubbleData.MergeDuration);
+        }
         
         private void SetColliderActive(bool isActive)
         {
