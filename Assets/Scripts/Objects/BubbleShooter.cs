@@ -102,6 +102,7 @@ namespace Objects
             Vector2 dir = barrel.up;
             Vector2 origin = magazines[0].position;
             RaycastHit2D hit;
+            Debug.Log("BubbleShooter -> RayCast -> -----------------------------------");
             while (true)
             {
                 // Cast a ray straight down.
@@ -109,6 +110,7 @@ namespace Objects
                 
                 if (hit.collider != null)
                 {
+                    Debug.Log("BubbleShooter -> RayCast -> hit.collider: " + hit.collider);
                     // Set line renderer position
                     lineRenderer.positionCount = index + 1;
                     lineRenderer.SetPosition(index, hit.point);

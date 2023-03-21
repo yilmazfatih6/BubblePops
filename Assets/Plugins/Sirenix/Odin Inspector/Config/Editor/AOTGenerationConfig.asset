@@ -9,11 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f65701404044a8bbbe79b7ccced73f3, type: 3}
-  m_Name: GameData
+  m_Script: {fileID: 1726182683, guid: a4865f1ab4504ed8a368670db22f409c, type: 3}
+  m_Name: AOTGenerationConfig
   m_EditorClassIdentifier: 
-  bubbleData: {fileID: 11400000, guid: 0d9d0fe52c204c445b06c3adf8792ade, type: 2}
-  tileOpacity: 0.75
-  initialRowCount: 2
-  maxBubbleExponent: 5
-  poolClearMessage: Perfect!
+  automateBeforeBuilds: 0
+  deleteDllAfterBuilds: 1
+  AutomateForAllAOTPlatforms: 1
+  automateForPlatforms: 0900000014000000
+  lastScan: 0
+  supportSerializedTypes: []
