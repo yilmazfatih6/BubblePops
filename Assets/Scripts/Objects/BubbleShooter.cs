@@ -200,6 +200,7 @@ namespace Objects
                 index += 1;
                 if (index >= _pathPositions.Count)
                 {
+                    BubbleSpawner.Instance.PoolBubbles.Add(BubbleSpawner.Instance.FirstShotBubble);
                     BubbleSpawner.Instance.FirstShotBubble.CheckForMerge();
                     return;
                 }
@@ -210,6 +211,7 @@ namespace Objects
         public void ReadyForNextShot()
         {
             Debug.Log("BubbleShooter -> ReadyForNextShot");
+            BubbleBreaker.Instance.Break();
             BubbleSpawner.Instance.SpawnNewShotBubble();
             _canShoot = true;
         }

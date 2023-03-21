@@ -19,6 +19,7 @@ namespace Objects
         
         [SerializeField] private TextMeshPro textMeshPro;
         [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private SpriteRenderer spriteRendererBlack;
         [SerializeField] private CircleCollider2D circleCollider;
         private int _number;
         private Tile _tile;
@@ -36,6 +37,11 @@ namespace Objects
         private void Awake()
         {
             _defaultScale = Vector3.one;
+        }
+
+        private void OnEnable()
+        {
+            spriteRendererBlack.gameObject.SetActive(false);
         }
 
         #endregion
@@ -148,6 +154,16 @@ namespace Objects
             }
         }
 
+        public void Fall()
+        {
+            spriteRendererBlack.gameObject.SetActive(true);
+            DOVirtual.DelayedCall(2f, Explode);
+        }
+        
+        #endregion
+
+        #region Private Methods
+
         private void GetMergeBubbles(List<Bubble> matchedBubbles, int number)
         {
             foreach (var neighbourTile in _tile.Neighbours)
@@ -160,9 +176,6 @@ namespace Objects
                 neighbourTile.Bubble.GetMergeBubbles(matchedBubbles, number);
             }
         }
-        #endregion
-
-        #region Private Methods
 
         // private List<Bubble> GetMergeBubbles()
         // {

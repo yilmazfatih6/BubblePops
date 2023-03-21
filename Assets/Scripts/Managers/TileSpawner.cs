@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Objects;
 using UnityEngine;
 using Utilities;
@@ -11,8 +12,12 @@ namespace Managers
 
         [SerializeField] private Tile tilePrefab; // Prefab of the tile to spawn at each cell
         private Tile[,] _tiles; // Array to store the positions of each cell in the grid
+        private List<Tile> _topTiles;
 
         public Tile[,] Tiles => _tiles;
+
+        public List<Tile> TopTiles => _topTiles;
+
 
         #region Init
 
@@ -58,6 +63,14 @@ namespace Managers
                 
                 }
             }
+
+            _topTiles = new List<Tile>();
+            // Set top tiles.
+            for (var j = 0; j < columns; j++)
+            {
+                _topTiles.Add(_tiles[rows - 1, j]);
+            }
+            
         }
 
         private void SetNeighbours()

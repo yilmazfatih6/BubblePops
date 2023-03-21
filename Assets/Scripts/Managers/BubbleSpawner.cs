@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Lean.Pool;
 using Objects;
 using ScriptableObjects;
 using UnityEngine;
@@ -16,6 +17,8 @@ namespace Managers
         private List<Bubble> _shotBubbles = new List<Bubble>();
 
         public Bubble FirstShotBubble => _shotBubbles[0];
+
+        public List<Bubble> PoolBubbles => _poolBubbles;
 
         #region Init
 
@@ -96,7 +99,7 @@ namespace Managers
 
         private void SpawnShotBubble(int index)
         {
-            var bubble = Lean.Pool.LeanPool.Spawn(bubblePrefab);
+            var bubble = LeanPool.Spawn(bubblePrefab, transform);
             _shotBubbles.Add(bubble);
             var number = (int)Random.Range(1, GameData.Instance.MaxBubbleExponent);
             bubble.InjectData(number: number, isColliderActive:false);
