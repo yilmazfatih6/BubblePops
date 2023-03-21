@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using Managers;
 using ScriptableObjects;
@@ -10,6 +11,8 @@ namespace Objects
 {
     public class BubbleShooter : SingletonMonoBehaviour<BubbleShooter>
     {
+        #region Data
+
         [SerializeField] private Transform[] magazines;
         [SerializeField] private LineRenderer lineRenderer;
         [SerializeField] private Transform barrel;
@@ -17,6 +20,7 @@ namespace Objects
         [SerializeField] private LayerMask wallLayerMask;
         [SerializeField] private LayerMask includeLayers;
         [SerializeField] private LayerMask tileLayer;
+        
         private Vector2 _direction = Vector2.zero;
         private Vector3 _barrelRotation;
         private Tile _hitTile;
@@ -24,8 +28,15 @@ namespace Objects
         private bool _isInputDown;
         private bool _canShoot = true;
         RaycastHit2D[] _results = new RaycastHit2D[10];
+        private List<Vector3> _pathPositions = new List<Vector3>();
+
+        #endregion
+
+        #region Accessor
 
         public Transform[] Magazines => magazines;
+
+        #endregion
 
         #region Init
 
@@ -34,14 +45,14 @@ namespace Objects
             lineRenderer.SetPosition(0, magazines[0].position);
             // _direction.y = directionY;
         }
-        
+
         #endregion
         
         #region Unity Loop
 
         private void Update()
         {
-            if (!_canShoot) return;
+            // if (!_canShoot) return;
             var lerpTime = (UIManager.Instance.HorizontalDirection + 1) / 2f;
             _barrelRotation = barrel.rotation.eulerAngles;
             _barrelRotation.z = Mathf.Lerp(maxAngle, -maxAngle, lerpTime);
@@ -49,12 +60,19 @@ namespace Objects
 
             if (Input.GetMouseButtonDown(0))
             {
+                _hitTile = null;
                 _isInputDown = true;
+                lineRenderer.positionCount = 1;
+                lineRenderer.SetPosition(0, barrel.position);
+                lineRenderer.enabled = true;
             }
 
             if (Input.GetMouseButtonUp(0))
             {
                 _isInputDown = false;
+                lineRenderer.enabled = false;
+                if (_hitTile == null) return;
+                _hitTile.SetSpriteRendererActive(false);
                 Shoot();
             }
             
@@ -76,7 +94,7 @@ namespace Objects
         // ReSharper disable Unity.PerformanceAnalysis
         private void RayCast()
         {
-            if (!_canShoot) return;
+            // if (!_canShoot) return;
             if (!_isInputDown) return;
             if(_hitTile) _hitTile.SetSpriteRendererActive(false);
             
@@ -136,6 +154,11 @@ namespace Objects
             if (tileHit.collider != null)
             {
                 _hitTile = tileHit.collider.gameObject.GetComponent<Tile>();
+                if (_hitTile.Bubble != null)
+                {
+                    _hitTile = null;
+                    return;
+                }
                 _hitTile.SetSpriteRendererActive(true, BubbleSpawner.Instance.FirstShotBubble.Color);
             }
         }
@@ -151,6 +174,11 @@ namespace Objects
                 return;
             }
 
+            // Copy line renderer positions.
+            _pathPositions.Clear();
+            for (var i = 0; i < lineRenderer.positionCount; i++)
+                _pathPositions.Add(lineRenderer.GetPosition(i));
+
             _canShoot = false;
             
             // Set tile. 
@@ -162,24 +190,29 @@ namespace Objects
 
         private void MoveBubbleAlongPath(int index)
         {
-            var position = lineRenderer.GetPosition(index);
-            if (index == lineRenderer.positionCount - 1)
+            var position = _pathPositions[index];
+            // var position = lineRenderer.GetPosition(index);
+            if (index == _pathPositions.Count - 1)
                 position = _hitTile.transform.position;
             
             BubbleSpawner.Instance.FirstShotBubble.Move(position).OnComplete(() =>
             {
                 index += 1;
-                if (index >= lineRenderer.positionCount)
+                if (index >= _pathPositions.Count)
                 {
                     BubbleSpawner.Instance.FirstShotBubble.CheckForMerge();
-                    BubbleSpawner.Instance.SpawnNewShotBubble();
-                    _canShoot = true;
                     return;
                 }
                 MoveBubbleAlongPath(index);
             });
         }
-        
+
+        public void ReadyForNextShot()
+        {
+            Debug.Log("BubbleShooter -> ReadyForNextShot");
+            BubbleSpawner.Instance.SpawnNewShotBubble();
+            _canShoot = true;
+        }
         #endregion
     }
 }

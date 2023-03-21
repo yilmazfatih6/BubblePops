@@ -14,6 +14,9 @@ namespace Objects
 {
     public class Bubble : MonoBehaviour
     {
+        public static event Action<Bubble> OnExploded;
+        public static event Action<Bubble> OnMergeNotFound;
+        
         [SerializeField] private TextMeshPro textMeshPro;
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private CircleCollider2D circleCollider;
@@ -83,7 +86,7 @@ namespace Objects
             _tile.SetBubble(this);
             SetColliderActive(true);
         }
-
+        
         public void CheckForMerge()
         {
             // Get merge bubble and store in a list.
@@ -91,16 +94,24 @@ namespace Objects
             GetMergeBubbles(bubbles, _number);
             
             // If count is 1 which means there is no merge, return.
-            if (bubbles.Count == 1) return;
+            if (bubbles.Count == 1)
+            {
+                OnMergeNotFound?.Invoke(this);
+                BubbleShooter.Instance.ReadyForNextShot();
+                return;
+            }
             
             // Calculate new number to assign after merge.
             var newNumber = Mathf.Clamp(_number + bubbles.Count - 1, 
                 GameData.Instance.BubbleData.Colors.First().Key,
                 GameData.Instance.BubbleData.Colors.Last().Key);
             
+            Debug.Log("GameData.Instance.BubbleData.Colors.First().Key: " + GameData.Instance.BubbleData.Colors.First().Key);
+            Debug.Log("GameData.Instance.BubbleData.Colors.Last().Key: " + GameData.Instance.BubbleData.Colors.Last().Key);
+            
             // Decide on which position to merge at.
             var positionToMergeAt = Vector3.zero;
-            int maxCount = 0;
+            int maxCount = 1;
             int bubbleIndex = bubbles.Count - 1;
             for (int i = 0; i < bubbles.Count; i++)
             {
@@ -212,8 +223,11 @@ namespace Objects
 
         private void Explode()
         {
+            if (!gameObject.activeSelf) return;
             _tile.ResetBubble();
+            Debug.Log("Explode: " + this.name);
             LeanPool.Despawn(this);
+            OnExploded?.Invoke(this);
         }
         #endregion
     }

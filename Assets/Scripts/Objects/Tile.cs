@@ -40,22 +40,34 @@ namespace Objects
         {
             _bubble = null;
 
-            SetColliderActive(true);
-                
+            CheckAndSetCollider();
+
+            // // Check neighbour tiles and disable collider.
+            // foreach (var neighbour in neighbours)
+            // {
+            //     if (neighbour.Bubble == null)
+            //         neighbour.CheckDisableTile();
+            // }
+            
+        }
+
+        // Disable tile collider if doesn't have any neighbour with bubble. Enable otherwise
+        private void CheckAndSetCollider()
+        {
+            var hasAnyNeighbourWithBubble = false;
+            
             foreach (var neighbour in neighbours)
             {
-                if (neighbour.Bubble == null)
+                if (neighbour.Bubble != null)
                 {
-                    var hasAnyNeighbourWithBubble = false;
-                    foreach (var neighbourOfNeighbour in neighbour.Neighbours)
-                    {
-                        if (neighbourOfNeighbour.Bubble != null) hasAnyNeighbourWithBubble = true;
-                    }
-                        
-                    if(!hasAnyNeighbourWithBubble) neighbour.SetColliderActive(false);
+                    hasAnyNeighbourWithBubble = true;
+                    break;
                 }
             }
-        }
+                        
+            Debug.Log(name + " hasAnyNeighbourWithBubble " + hasAnyNeighbourWithBubble);
+            SetColliderActive(hasAnyNeighbourWithBubble);
+        } 
         
         public void SetText(string text)
         {
@@ -63,8 +75,9 @@ namespace Objects
             gameObject.name = "Tile_" + text;
         }
 
-        public void SetColliderActive(bool isActive)
+        private void SetColliderActive(bool isActive)
         {
+            Debug.Log(gameObject.name + "SetColliderActive: " + isActive);
             circleCollider.enabled = isActive;
             spriteRenderer_2.gameObject.SetActive(isActive);
         }

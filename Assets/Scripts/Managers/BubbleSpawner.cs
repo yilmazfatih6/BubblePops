@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Objects;
+using ScriptableObjects;
 using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
@@ -10,8 +11,6 @@ namespace Managers
     public class BubbleSpawner : SingletonMonoBehaviour<BubbleSpawner>
     {
         [SerializeField] private Bubble bubblePrefab;
-        [SerializeField] private int initialRowCount = 3;
-        [SerializeField] private int maxExponent = 5;
         
         private List<Bubble> _poolBubbles = new List<Bubble>();
         private List<Bubble> _shotBubbles = new List<Bubble>();
@@ -23,13 +22,24 @@ namespace Managers
         private void OnEnable()
         {
             TileSpawner.OnTileSpawnCompleted += OnTileSpawnCompleted;
+            Bubble.OnExploded += OnBubbleExploded;
         }
 
         private void OnDisable()
         {
             TileSpawner.OnTileSpawnCompleted -= OnTileSpawnCompleted;
+            Bubble.OnExploded -= OnBubbleExploded;
         }
-        
+
+        #endregion
+
+        #region Callbacks
+
+        private void OnBubbleExploded(Bubble obj)
+        {
+            if(_poolBubbles.Contains(obj)) _poolBubbles.Remove(obj);
+        }
+
         #endregion
 
         #region Callbacks
@@ -62,7 +72,7 @@ namespace Managers
             var rows = GridGenerator.Instance.Rows;
             var columns = GridGenerator.Instance.Columns;
 
-            for (int i = rows - 1; i >= rows - initialRowCount; i--)
+            for (int i = rows - 1; i >= rows - GameData.Instance.InitialRowCount; i--)
             {
                 for (int j = 0; j < columns; j++)
                 {
@@ -71,7 +81,7 @@ namespace Managers
 
                     var tile = TileSpawner.Instance.Tiles[i, j];
             
-                    bubble.InjectData(tile: tile, number: Random.Range(1, maxExponent));
+                    bubble.InjectData(tile: tile, number: Random.Range(1, GameData.Instance.MaxBubbleExponent));
                 }
             }
         }
@@ -88,7 +98,7 @@ namespace Managers
         {
             var bubble = Lean.Pool.LeanPool.Spawn(bubblePrefab);
             _shotBubbles.Add(bubble);
-            var number = (int)Random.Range(1, maxExponent);
+            var number = (int)Random.Range(1, GameData.Instance.MaxBubbleExponent);
             bubble.InjectData(number: number, isColliderActive:false);
             bubble.SetTransform(BubbleShooter.Instance.Magazines[index], index == 0);
         }
