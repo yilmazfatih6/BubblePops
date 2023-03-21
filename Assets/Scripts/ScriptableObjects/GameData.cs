@@ -13,10 +13,14 @@ namespace ScriptableObjects
         [TitleGroup("Bubble Spawn")]
         [SerializeField] private int initialRowCount = 2;
         [SerializeField] private int maxBubbleExponent = 5;
+
+        [TitleGroup("UI")] 
+        [SerializeField] private string poolClearMessage = "Perfect!";
         
         public BubbleData BubbleData => bubbleData;
         public float TileOpacity => tileOpacity;
         public int InitialRowCount => initialRowCount;
         public int MaxBubbleExponent => maxBubbleExponent;
+        public string PoolClearMessage => poolClearMessage;
     }
 }

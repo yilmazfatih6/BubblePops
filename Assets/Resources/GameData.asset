@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bubbleData: {fileID: 11400000, guid: 0d9d0fe52c204c445b06c3adf8792ade, type: 2}
   tileOpacity: 0.75
+  initialRowCount: 2
+  maxBubbleExponent: 1
+  poolClearMessage: Perfect!

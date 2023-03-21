@@ -100,7 +100,7 @@ namespace Objects
             GetMergeBubbles(bubbles, _number);
             
             // If count is 1 which means there is no merge, return.
-            if (bubbles.Count == 1)
+            if (bubbles.Count <= 1)
             {
                 OnMergeNotFound?.Invoke(this);
                 BubbleShooter.Instance.ReadyForNextShot();
@@ -209,6 +209,7 @@ namespace Objects
                         neighbour.Bubble.Explode();
                     }
                 }
+                BubbleShooter.Instance.ReadyForNextShot();
             }
             else
             {

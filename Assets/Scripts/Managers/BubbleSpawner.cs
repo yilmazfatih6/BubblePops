@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Lean.Pool;
 using Objects;
 using ScriptableObjects;
+using UI;
 using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
@@ -40,7 +41,12 @@ namespace Managers
 
         private void OnBubbleExploded(Bubble obj)
         {
-            if(_poolBubbles.Contains(obj)) _poolBubbles.Remove(obj);
+            if (_poolBubbles.Contains(obj))
+            {
+                _poolBubbles.Remove(obj);
+                if (_poolBubbles.Count == 0)
+                    NotificationText.Instance.Display(GameData.Instance.PoolClearMessage);
+            }
         }
 
         #endregion

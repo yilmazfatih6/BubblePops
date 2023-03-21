@@ -1,5 +1,4 @@
 ## TODO
-# when a bubble or a cluster of bubbles is not connected to the ceiling, the whole cluster falls down
 # if you clear the whole board, you get a "Perfect" notification
 # animation and VFX
 
@@ -7,5 +6,6 @@
 # Bubble shooter aim has weird glitch.
 
 ## DONE
+# when a bubble or a cluster of bubbles is not connected to the ceiling, the whole cluster falls down
 # bubbles prefer to merge into a location where an automatic new merge is possible
 # when the score reaches 2048 the bubble and its neighbours explode
