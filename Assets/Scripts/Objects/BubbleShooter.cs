@@ -43,6 +43,7 @@ namespace Objects
         private void Awake()
         {
             lineRenderer.SetPosition(0, magazines[0].position);
+            lineRenderer.enabled = false;
             // _direction.y = directionY;
         }
 
@@ -102,7 +103,7 @@ namespace Objects
             Vector2 dir = barrel.up;
             Vector2 origin = magazines[0].position;
             RaycastHit2D hit;
-            Debug.Log("BubbleShooter -> RayCast -> -----------------------------------");
+            // Debug.Log("BubbleShooter -> RayCast -> -----------------------------------");
             while (true)
             {
                 // Cast a ray straight down.
@@ -110,7 +111,7 @@ namespace Objects
                 
                 if (hit.collider != null)
                 {
-                    Debug.Log("BubbleShooter -> RayCast -> hit.collider: " + hit.collider);
+                    // Debug.Log("BubbleShooter -> RayCast -> hit.collider: " + hit.collider);
                     // Set line renderer position
                     lineRenderer.positionCount = index + 1;
                     lineRenderer.SetPosition(index, hit.point);
@@ -126,8 +127,7 @@ namespace Objects
                         dir = (hit.point - origin).normalized;
                         dir.x *= -1f;
                         origin = hit.point;
-                        if (origin.x > 0) origin.x -= .01f;
-                        else origin.x += .01f;
+                        origin += dir * .1f;
                         
                         continue;
                     }
@@ -138,7 +138,7 @@ namespace Objects
             
             // Get furthest tile index.
             int hits = Physics2D.RaycastNonAlloc(origin, dir, _results, Vector2.Distance(origin, hit.point), tileLayer);
-            Debug.Log("Hits: " + hits);
+            // Debug.Log("Hits: " + hits);
             float furthestDistance = -1f;
             int furthestTileIndex = 0;
             for (int i = 0; i < hits; i++)
@@ -212,7 +212,7 @@ namespace Objects
 
         public void ReadyForNextShot()
         {
-            Debug.Log("BubbleShooter -> ReadyForNextShot");
+            // Debug.Log("BubbleShooter -> ReadyForNextShot");
             BubbleBreaker.Instance.Break();
             BubbleSpawner.Instance.SpawnNewShotBubble();
             _canShoot = true;

@@ -16,11 +16,15 @@ namespace ScriptableObjects
 
         [TitleGroup("UI")] 
         [SerializeField] private string poolClearMessage = "Perfect!";
+        [SerializeField] private float bubblePopTextDuration = .5f;
+        [SerializeField] private float bubblePopTextMovement = 1f;
         
         public BubbleData BubbleData => bubbleData;
         public float TileOpacity => tileOpacity;
         public int InitialRowCount => initialRowCount;
         public int MaxBubbleExponent => maxBubbleExponent;
         public string PoolClearMessage => poolClearMessage;
+        public float BubblePopTextDuration => bubblePopTextDuration;
+        public float BubblePopTextMovement => bubblePopTextMovement;
     }
 }

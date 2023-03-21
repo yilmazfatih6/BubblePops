@@ -131,13 +131,13 @@ namespace Objects
                 }
             }
                         
-            Debug.Log(name + " hasAnyNeighbourWithBubble " + hasAnyNeighbourWithBubble);
+            // Debug.Log(name + " hasAnyNeighbourWithBubble " + hasAnyNeighbourWithBubble);
             SetColliderActive(hasAnyNeighbourWithBubble);
         } 
         
         private void SetColliderActive(bool isActive)
         {
-            Debug.Log(gameObject.name + "SetColliderActive: " + isActive);
+            // Debug.Log(gameObject.name + "SetColliderActive: " + isActive);
             circleCollider.enabled = isActive;
             spriteRenderer_2.gameObject.SetActive(isActive);
         }

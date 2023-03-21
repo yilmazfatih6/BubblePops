@@ -389,6 +389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7b2a60999404e879cadbf830e0c047b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bubblePopText: {fileID: 2170880489301159316, guid: b28ef2995a2d51a458e0ad595ae4336b, type: 3}
   textMeshPro: {fileID: 2190423055925168424}
   spriteRenderer: {fileID: 7344753764997296147}
   spriteRendererBlack: {fileID: 883070571362264964}

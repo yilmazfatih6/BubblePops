@@ -28,4 +28,4 @@ MonoBehaviour:
     - {r: 0.43614274, g: 0.9339623, b: 0.7966561, a: 1}
   magazineScale: 0.8
   movementSpeed: 15
-  mergeDuration: 0.2
+  mergeDuration: 0.25

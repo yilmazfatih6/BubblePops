@@ -7,6 +7,7 @@ using Lean.Pool;
 using ScriptableObjects;
 using Sirenix.OdinInspector;
 using TMPro;
+using UI;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ namespace Objects
         public static event Action<Bubble> OnExploded;
         public static event Action<Bubble> OnMergeNotFound;
         
+        [SerializeField] private BubblePopText bubblePopText;
         [SerializeField] private TextMeshPro textMeshPro;
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private SpriteRenderer spriteRendererBlack;
@@ -112,9 +114,9 @@ namespace Objects
                 GameData.Instance.BubbleData.Colors.First().Key,
                 GameData.Instance.BubbleData.Colors.Last().Key);
             
-            Debug.Log("GameData.Instance.BubbleData.Colors.First().Key: " + GameData.Instance.BubbleData.Colors.First().Key);
-            Debug.Log("GameData.Instance.BubbleData.Colors.Last().Key: " + GameData.Instance.BubbleData.Colors.Last().Key);
-            
+            // Debug.Log("GameData.Instance.BubbleData.Colors.First().Key: " + GameData.Instance.BubbleData.Colors.First().Key);
+            // Debug.Log("GameData.Instance.BubbleData.Colors.Last().Key: " + GameData.Instance.BubbleData.Colors.Last().Key);
+
             // Decide on which position to merge at.
             var positionToMergeAt = Vector3.zero;
             int maxCount = 1;
@@ -197,6 +199,9 @@ namespace Objects
             _number = newNumber;
             textMeshPro.text = Mathf.Pow(2, _number).ToString(CultureInfo.InvariantCulture);
             spriteRenderer.color = GameData.Instance.BubbleData.Colors[_number];
+
+            var spawned = LeanPool.Spawn(bubblePopText, transform.position, transform.rotation);
+            spawned.InjectData(_number.ToString());
             
             // On max number is reached explode neighbours and self
             if (_number == GameData.Instance.BubbleData.Colors.Last().Key)
@@ -239,7 +244,7 @@ namespace Objects
         {
             if (!gameObject.activeSelf) return;
             _tile.ResetBubble();
-            Debug.Log("Explode: " + this.name);
+            // Debug.Log("Explode: " + this.name);
             LeanPool.Despawn(this);
             OnExploded?.Invoke(this);
         }
