@@ -91,6 +91,7 @@ namespace Managers
                     var tile = TileSpawner.Instance.Tiles[i, j];
             
                     bubble.InjectData(tile: tile, number: Random.Range(1, GameData.Instance.MaxBubbleExponent));
+                    
                 }
             }
         }

@@ -54,6 +54,8 @@ namespace Objects
 
         private void Update()
         {
+            if (!_canShoot) return;
+            
             // if (!_canShoot) return;
             var lerpTime = (UIManager.Instance.HorizontalDirection + 1) / 2f;
             _barrelRotation = barrel.rotation.eulerAngles;
@@ -62,11 +64,8 @@ namespace Objects
 
             if (Input.GetMouseButtonDown(0))
             {
-                _hitTile = null;
                 _isInputDown = true;
-                lineRenderer.positionCount = 1;
-                lineRenderer.SetPosition(0, barrel.position);
-                lineRenderer.enabled = true;
+                ResetProperties();
             }
 
             else if (Input.GetMouseButtonUp(0))
@@ -82,6 +81,8 @@ namespace Objects
         
         private void FixedUpdate()
         {
+            if (!_canShoot) return;
+
             RayCast();
         }
 
@@ -89,6 +90,14 @@ namespace Objects
         
         #region Public Methods
 
+        public void ReadyForNextShot()
+        {
+            BubbleBreaker.Instance.Break();
+            BubbleSpawner.Instance.SpawnNewShotBubble();
+            _canShoot = true;
+            ResetProperties();
+        }
+        
         #endregion
 
         #region Private Methods
@@ -205,7 +214,7 @@ namespace Objects
                 index += 1;
                 if (index >= _pathPositions.Count)
                 {
-                    AudioManager.Instance.PlayClip(GameData.Instance.BubbleData.PlacementSound);
+                    AudioManager.Instance.PlayClip(GameData.Instance.BubblePlacementAudio);
                     BubbleSpawner.Instance.FirstShotBubble.SetTrailActive(false);
                     BubbleSpawner.Instance.PoolBubbles.Add(BubbleSpawner.Instance.FirstShotBubble);
                     BubbleSpawner.Instance.FirstShotBubble.WiggleNeighbours();
@@ -217,12 +226,12 @@ namespace Objects
             });
         }
 
-        public void ReadyForNextShot()
+        private void ResetProperties()
         {
-            // Debug.Log("BubbleShooter -> ReadyForNextShot");
-            BubbleBreaker.Instance.Break();
-            BubbleSpawner.Instance.SpawnNewShotBubble();
-            _canShoot = true;
+            _hitTile = null;
+            lineRenderer.positionCount = 1;
+            lineRenderer.SetPosition(0, barrel.position);
+            lineRenderer.enabled = true;
         }
         #endregion
     }

@@ -69,7 +69,7 @@ namespace Objects
 
         #region Public Methods
 
-        public void InjectData(int number, Tile tile = null, bool isColliderActive = true)
+        public void InjectData(int number, Tile tile = null, bool isColliderActive = true, bool playScaleAnimation = false)
         {
             _number = number;
             textMeshPro.text = Mathf.Pow(2, _number).ToString(CultureInfo.InvariantCulture);
@@ -88,6 +88,11 @@ namespace Objects
             trailRenderer.endColor = color;
 
             SetColliderActive(isColliderActive);
+
+            if (playScaleAnimation)
+            {
+                ScaleAnimation();
+            }
         }
         
         public void SetTransform(Transform target, bool isFirstSlot = false)
@@ -224,7 +229,7 @@ namespace Objects
             spriteRenderer.color = GameData.Instance.BubbleData.Colors[_number];
 
             var spawned = LeanPool.Spawn(bubblePopText, transform.position, transform.rotation);
-            spawned.InjectData(_number.ToString());
+            spawned.InjectData(textMeshPro.text);
             
             // On max number is reached explode neighbours and self
             if (_number == GameData.Instance.BubbleData.Colors.Last().Key)
@@ -280,7 +285,7 @@ namespace Objects
             spriteRenderer.enabled = false;
             textMeshPro.enabled = false;
             LeanPool.Despawn(this, GameData.Instance.BubbleData.DespawnDelay);
-            AudioManager.Instance.PlayClip(GameData.Instance.BubbleData.PopSound, index * GameData.Instance.BubbleData.ExplosionFXDelay);
+            AudioManager.Instance.PlayClip(GameData.Instance.BubblePopAudio, index * GameData.Instance.BubbleData.ExplosionFXDelay);
             OnExploded?.Invoke(this);
         }
 
@@ -306,6 +311,12 @@ namespace Objects
                     neighbour.Bubble.Wiggle(this);
                 }
             }
+        }
+
+        private void ScaleAnimation()
+        {
+            transform.localScale = Vector3.zero;
+            transform.DOScale(Vector3.one, GameData.Instance.BubbleData.ScaleUpDuration);
         }
         #endregion
         
