@@ -28,6 +28,31 @@ MonoBehaviour:
     - {r: 0.43614274, g: 0.9339623, b: 0.7966561, a: 1}
   magazineScale: 0.8
   movementSpeed: 15
+  pathMovementEase:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.045705616
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   wiggleDuration: 0.1
   wiggleDistanceMultiplier: 0.1
   mergeDuration: 0.25
+  explosionVFXDelay: 0.1

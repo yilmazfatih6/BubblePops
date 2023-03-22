@@ -1,13 +1,14 @@
 ## TODO
 # animation and VFX
 # bubble fall animation.
-# bubble explosion particle.
-# bubble movement on tile placement.
+
 
 ## BUGS 
 # Spamming taps causes bug.
 
 ## DONE
+# bubble explosion particle.
+# bubble movement on tile placement.
 # if you clear the whole board, you get a "Perfect" notification
 # when a bubble or a cluster of bubbles is not connected to the ceiling, the whole cluster falls down
 # bubbles prefer to merge into a location where an automatic new merge is possible

@@ -196,12 +196,15 @@ namespace Objects
             // var position = lineRenderer.GetPosition(index);
             if (index == _pathPositions.Count - 1)
                 position = _hitTile.transform.position;
+
+            if (index == 1) BubbleSpawner.Instance.FirstShotBubble.SetTrailActive(true);
             
-            BubbleSpawner.Instance.FirstShotBubble.Move(position).OnComplete(() =>
+            BubbleSpawner.Instance.FirstShotBubble.Move(position, GameData.Instance.BubbleData.PathMovementEase).OnComplete(() =>
             {
                 index += 1;
                 if (index >= _pathPositions.Count)
                 {
+                    BubbleSpawner.Instance.FirstShotBubble.SetTrailActive(false);
                     BubbleSpawner.Instance.PoolBubbles.Add(BubbleSpawner.Instance.FirstShotBubble);
                     BubbleSpawner.Instance.FirstShotBubble.WiggleNeighbours();
                     BubbleSpawner.Instance.FirstShotBubble.CheckForMerge();

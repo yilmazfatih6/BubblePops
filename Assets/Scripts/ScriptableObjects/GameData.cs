@@ -8,8 +8,11 @@ namespace ScriptableObjects
     public class GameData : SingletonScriptableObject<GameData>
     {
         [SerializeField, InlineEditor()] private BubbleData bubbleData;
-        [SerializeField] private float tileOpacity = .25f;
 
+        [TitleGroup("Tile Data")]
+        [SerializeField] private float tileOpacity = .25f;
+        [SerializeField] private float tileColorAnimationDuration = .25f;
+        
         [TitleGroup("Bubble Spawn")]
         [SerializeField] private int initialRowCount = 2;
         [SerializeField] private int maxBubbleExponent = 5;
@@ -20,7 +23,11 @@ namespace ScriptableObjects
         [SerializeField] private float bubblePopTextMovement = 1f;
         
         public BubbleData BubbleData => bubbleData;
+        
+        // Tile Data
         public float TileOpacity => tileOpacity;
+        public float TileColorAnimationDuration => tileColorAnimationDuration;
+
         public int InitialRowCount => initialRowCount;
         public int MaxBubbleExponent => maxBubbleExponent;
         public string PoolClearMessage => poolClearMessage;

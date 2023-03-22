@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
 
@@ -10,14 +11,18 @@ namespace ScriptableObjects
         [SerializeField] private IntColorPairs colors;
         [SerializeField] private float magazineScale = .8f;
         [SerializeField] private float movementSpeed = 1f;
+        [SerializeField] private AnimationCurve pathMovementEase;
         [SerializeField] private float wiggleDuration = 1f;
         [SerializeField] private float wiggleDistanceMultiplier = 1f;
         [SerializeField] private float mergeDuration = .5f;
+        [SerializeField] private float explosionVFXDelay = .1f;
         public IntColorPairs Colors => colors;
         public float MagazineScale => magazineScale;
         public float MovementSpeed => movementSpeed;
+        public AnimationCurve PathMovementEase => pathMovementEase;
         public float WiggleDuration => wiggleDuration;
         public float WiggleDistanceMultiplier => wiggleDistanceMultiplier;
         public float MergeDuration => mergeDuration;
+        public float ExplosionVFXDelay => explosionVFXDelay;
     }
 }

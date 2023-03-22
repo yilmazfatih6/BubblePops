@@ -1791,7 +1791,7 @@ GameObject:
   - component: {fileID: 1553210729}
   - component: {fileID: 1553210730}
   m_Layer: 0
-  m_Name: BubblePopSpawner
+  m_Name: BubblePopTextSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

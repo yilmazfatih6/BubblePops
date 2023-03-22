@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DG.Tweening;
 using ScriptableObjects;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -32,6 +33,8 @@ namespace Objects
         private void OnEnable()
         {
             SetColliderActive(false);
+            spriteRenderer.enabled = false;
+            spriteRenderer.gameObject.SetActive(true);
         }
 
         #endregion
@@ -69,11 +72,13 @@ namespace Objects
         
         public void SetSpriteRendererActive(bool isActive, Color color = default)
         {
-            spriteRenderer.gameObject.SetActive(isActive);
+            spriteRenderer.enabled = isActive;
             if (isActive)
             {
                 color.a = GameData.Instance.TileOpacity;
                 spriteRenderer.color = color;
+                spriteRenderer.transform.localScale = Vector3.zero;
+                spriteRenderer.transform.DOScale(Vector3.one, GameData.Instance.TileColorAnimationDuration);
             }
         }
     

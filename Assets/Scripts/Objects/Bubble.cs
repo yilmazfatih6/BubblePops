@@ -10,6 +10,7 @@ using TMPro;
 using UI;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Objects
 {
@@ -24,11 +25,13 @@ namespace Objects
         
         #region Data
 
-        [SerializeField] private BubblePopText bubblePopText;
         [SerializeField] private TextMeshPro textMeshPro;
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private SpriteRenderer spriteRendererBlack;
         [SerializeField] private CircleCollider2D circleCollider;
+        [SerializeField] private ParticleSystem explosionVFX;
+        [SerializeField] private TrailRenderer trailRenderer;
+        [SerializeField] private BubblePopText bubblePopText;
         
         private int _number;
         private Tile _tile;
@@ -42,9 +45,6 @@ namespace Objects
         public Color Color => GameData.Instance.BubbleData.Colors[_number];
 
         #endregion
-
-        
-        
 
         #region Init
 
@@ -60,7 +60,10 @@ namespace Objects
 
         private void OnEnable()
         {
-            spriteRendererBlack.gameObject.SetActive(false);
+            spriteRenderer.enabled = true;
+            textMeshPro.enabled = true;
+            spriteRendererBlack.enabled = false;
+            trailRenderer.emitting = false;
         }
 
         #endregion
@@ -79,7 +82,11 @@ namespace Objects
                 _tile.SetBubble(this);
             }
 
-            spriteRenderer.color = GameData.Instance.BubbleData.Colors[number];
+            var color = GameData.Instance.BubbleData.Colors[number];
+            spriteRenderer.color = color;
+            trailRenderer.startColor = color;
+            color.a = 0;
+            trailRenderer.endColor = color;
 
             SetColliderActive(isColliderActive);
         }
@@ -94,18 +101,24 @@ namespace Objects
             }
         }
 
-        public Tween Move(Vector3 position)
+        public Tween Move(Vector3 position, AnimationCurve ease = null)
         {
             _movementTween?.Kill();
             // Debug.Log(gameObject.name + "Kill Movement Tween", gameObject);
             var distance = Vector3.Distance(transform.position, position);
             _movementTween = transform.DOMove(position, distance / GameData.Instance.BubbleData.MovementSpeed);
+            if (ease != null) _movementTween.SetEase(ease);
             return _movementTween;
         }
         
         public void ResetScale()
         {
             transform.DOScale(_defaultScale, .5f);
+        }
+
+        public void SetTrailActive(bool isActive)
+        {
+            trailRenderer.emitting = isActive;
         }
 
         public void SetTile(Tile tile, Vector3[] pathPositions = null)
@@ -155,7 +168,7 @@ namespace Objects
             // Move each bubble, after movement bump at bubble at merge position and explode others.
             for (int i = 0; i < bubbles.Count; i++)
             {
-                var tween = bubbles[i].MergeMove(bubbles[bubbleIndex].transform.position);
+                var tween = bubbles[i].MergeMove(bubbles[bubbleIndex].transform.position, i);
 
                 if (i == bubbleIndex)
                 {
@@ -178,7 +191,7 @@ namespace Objects
 
         public void Fall()
         {
-            spriteRendererBlack.gameObject.SetActive(true);
+            spriteRendererBlack.enabled = true;
             DOVirtual.DelayedCall(2f, Explode);
         }
         
@@ -249,10 +262,14 @@ namespace Objects
             BumpUp(_number + 1);
         }
 
-        private Tween MergeMove(Vector3 position)
+        private Tween MergeMove(Vector3 position, int index)
         {
+            var particleSystemMain = explosionVFX.main;
+            particleSystemMain.startColor = spriteRenderer.color;
+            particleSystemMain.startDelay = index * GameData.Instance.BubbleData.ExplosionVFXDelay;
+            explosionVFX.Play();
+            
             _movementTween?.Kill();
-            // Debug.Log(gameObject.name + "Kill Movement Tween", gameObject);
             _movementTween = transform.DOMove(position, GameData.Instance.BubbleData.MergeDuration);
             return _movementTween;
         }
@@ -267,7 +284,10 @@ namespace Objects
             if (!gameObject.activeSelf) return;
             _tile.ResetBubble();
             // Debug.Log("Explode: " + this.name);
-            LeanPool.Despawn(this);
+            
+            spriteRenderer.enabled = false;
+            textMeshPro.enabled = false;
+            LeanPool.Despawn(this, 2);
             OnExploded?.Invoke(this);
         }
 
