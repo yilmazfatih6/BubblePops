@@ -59,8 +59,8 @@ namespace Managers
                     var tilePosition = GridGenerator.Instance.CellPositions[i, j];
                     var tile = Instantiate(tilePrefab, tilePosition, Quaternion.identity, transform);
                     tile.SetText(i + "_" + j);
+                    tile.SetTopTile(i == rows - 1);
                     _tiles[i, j] = tile;
-                
                 }
             }
 

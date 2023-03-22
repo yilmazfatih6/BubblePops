@@ -15,19 +15,36 @@ namespace Objects
 {
     public class Bubble : MonoBehaviour
     {
+        #region Events
+        
         public static event Action<Bubble> OnExploded;
         public static event Action<Bubble> OnMergeNotFound;
+
+        #endregion
         
+        #region Data
+
         [SerializeField] private BubblePopText bubblePopText;
         [SerializeField] private TextMeshPro textMeshPro;
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private SpriteRenderer spriteRendererBlack;
         [SerializeField] private CircleCollider2D circleCollider;
+        
         private int _number;
         private Tile _tile;
         private Vector3 _defaultScale;
+        private Tween _movementTween;
+        
+        #endregion
+
+        #region Accessors
 
         public Color Color => GameData.Instance.BubbleData.Colors[_number];
+
+        #endregion
+
+        
+        
 
         #region Init
 
@@ -79,8 +96,11 @@ namespace Objects
 
         public Tween Move(Vector3 position)
         {
+            _movementTween?.Kill();
+            // Debug.Log(gameObject.name + "Kill Movement Tween", gameObject);
             var distance = Vector3.Distance(transform.position, position);
-            return transform.DOMove(position, distance / GameData.Instance.BubbleData.MovementSpeed);
+            _movementTween = transform.DOMove(position, distance / GameData.Instance.BubbleData.MovementSpeed);
+            return _movementTween;
         }
         
         public void ResetScale()
@@ -231,8 +251,10 @@ namespace Objects
 
         private Tween MergeMove(Vector3 position)
         {
-            var distance = Vector3.Distance(transform.position, position);
-            return transform.DOMove(position, GameData.Instance.BubbleData.MergeDuration);
+            _movementTween?.Kill();
+            // Debug.Log(gameObject.name + "Kill Movement Tween", gameObject);
+            _movementTween = transform.DOMove(position, GameData.Instance.BubbleData.MergeDuration);
+            return _movementTween;
         }
         
         private void SetColliderActive(bool isActive)
@@ -247,6 +269,30 @@ namespace Objects
             // Debug.Log("Explode: " + this.name);
             LeanPool.Despawn(this);
             OnExploded?.Invoke(this);
+        }
+
+        // Called when a bubble is placed to neighbour tile.
+        private void Wiggle(Bubble bubble)
+        {
+            _movementTween?.Kill();
+            // Debug.Log(gameObject.name + "Kill Movement Tween", gameObject);
+            var distance = (transform.position - bubble.transform.position) * GameData.Instance.BubbleData.WiggleDistanceMultiplier;
+            _movementTween = transform.DOMove(duration: GameData.Instance.BubbleData.WiggleDuration, endValue: distance)
+                .SetRelative()
+                .SetLoops(2, LoopType.Yoyo);
+        }
+
+        public void WiggleNeighbours()
+        {
+            foreach (var neighbour in _tile.Neighbours)
+            {
+                // Debug.Log("neighbour: " + neighbour.name);
+                if (neighbour.Bubble != null)
+                {
+                    // Debug.Log("neighbour Bubble: " + neighbour.Bubble.name);
+                    neighbour.Bubble.Wiggle(this);
+                }
+            }
         }
         #endregion
     }

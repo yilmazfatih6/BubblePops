@@ -16,6 +16,7 @@ namespace Objects
         [SerializeField] private CircleCollider2D circleCollider;
         [SerializeField, ReadOnly] private List<Tile> neighbours = new List<Tile>();
         private Bubble _bubble;
+        private bool _isTopTile;
 
         #endregion
 
@@ -52,16 +53,7 @@ namespace Objects
         public void ResetBubble()
         {
             _bubble = null;
-
             CheckAndSetCollider();
-
-            // // Check neighbour tiles and disable collider.
-            // foreach (var neighbour in neighbours)
-            // {
-            //     if (neighbour.Bubble == null)
-            //         neighbour.CheckDisableTile();
-            // }
-            
         }
 
         public void SetText(string text)
@@ -70,6 +62,11 @@ namespace Objects
             gameObject.name = "Tile_" + text;
         }
 
+        public void SetTopTile(bool isTopTile)
+        {
+            _isTopTile = isTopTile;
+        }
+        
         public void SetSpriteRendererActive(bool isActive, Color color = default)
         {
             spriteRenderer.gameObject.SetActive(isActive);
@@ -138,6 +135,7 @@ namespace Objects
         private void SetColliderActive(bool isActive)
         {
             // Debug.Log(gameObject.name + "SetColliderActive: " + isActive);
+            if (_isTopTile) isActive = true;
             circleCollider.enabled = isActive;
             spriteRenderer_2.gameObject.SetActive(isActive);
         }

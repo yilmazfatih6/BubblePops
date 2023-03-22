@@ -1,8 +1,11 @@
 ## TODO
 # animation and VFX
+# bubble fall animation.
+# bubble explosion particle.
+# bubble movement on tile placement.
 
 ## BUGS 
-# Bubble shooter aim has weird glitch.
+# Spamming taps causes bug.
 
 ## DONE
 # if you clear the whole board, you get a "Perfect" notification

@@ -61,7 +61,7 @@ namespace Objects
 
             if (Input.GetMouseButtonDown(0))
             {
-                _hitTile = null;
+                // _hitTile = null;
                 _isInputDown = true;
                 lineRenderer.positionCount = 1;
                 lineRenderer.SetPosition(0, barrel.position);
@@ -203,7 +203,9 @@ namespace Objects
                 if (index >= _pathPositions.Count)
                 {
                     BubbleSpawner.Instance.PoolBubbles.Add(BubbleSpawner.Instance.FirstShotBubble);
+                    BubbleSpawner.Instance.FirstShotBubble.WiggleNeighbours();
                     BubbleSpawner.Instance.FirstShotBubble.CheckForMerge();
+                    
                     return;
                 }
                 MoveBubbleAlongPath(index);

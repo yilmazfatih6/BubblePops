@@ -28,4 +28,6 @@ MonoBehaviour:
     - {r: 0.43614274, g: 0.9339623, b: 0.7966561, a: 1}
   magazineScale: 0.8
   movementSpeed: 15
+  wiggleDuration: 0.1
+  wiggleDistanceMultiplier: 0.1
   mergeDuration: 0.25
