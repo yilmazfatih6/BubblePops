@@ -67,7 +67,7 @@ namespace Managers
         public void SpawnNewShotBubble()
         {
             _shotBubbles.RemoveAt(0);
-            FirstShotBubble.Move(BubbleShooter.Instance.Magazines[0].position);
+            FirstShotBubble.Move(BubbleShooter.Instance.Magazines[0].position, GameData.Instance.BubbleData.MovementSpeed);
             FirstShotBubble.ResetScale();
             SpawnShotBubble(1);
         }

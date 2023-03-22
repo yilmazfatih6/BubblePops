@@ -35,6 +35,7 @@ namespace Objects
         #region Accessor
 
         public Transform[] Magazines => magazines;
+        public Transform Barrel => barrel;
 
         #endregion
 
@@ -199,7 +200,7 @@ namespace Objects
 
             if (index == 1) BubbleSpawner.Instance.FirstShotBubble.SetTrailActive(true);
             
-            BubbleSpawner.Instance.FirstShotBubble.Move(position, GameData.Instance.BubbleData.PathMovementEase).OnComplete(() =>
+            BubbleSpawner.Instance.FirstShotBubble.Move(position, GameData.Instance.BubbleData.MovementSpeed, GameData.Instance.BubbleData.PathMovementEase).OnComplete(() =>
             {
                 index += 1;
                 if (index >= _pathPositions.Count)

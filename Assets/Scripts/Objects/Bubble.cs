@@ -101,12 +101,12 @@ namespace Objects
             }
         }
 
-        public Tween Move(Vector3 position, AnimationCurve ease = null)
+        public Tween Move(Vector3 position, float speed, AnimationCurve ease = null)
         {
             _movementTween?.Kill();
             // Debug.Log(gameObject.name + "Kill Movement Tween", gameObject);
             var distance = Vector3.Distance(transform.position, position);
-            _movementTween = transform.DOMove(position, distance / GameData.Instance.BubbleData.MovementSpeed);
+            _movementTween = transform.DOMove(position, distance / speed);
             if (ease != null) _movementTween.SetEase(ease);
             return _movementTween;
         }
@@ -191,8 +191,12 @@ namespace Objects
 
         public void Fall()
         {
-            spriteRendererBlack.enabled = true;
-            DOVirtual.DelayedCall(2f, Explode);
+            var targetPosition = transform.position;
+            targetPosition.y = BubbleShooter.Instance.Barrel.transform.position.y;
+
+            Move(targetPosition, GameData.Instance.BubbleData.FallSpeed, GameData.Instance.BubbleData.FallEase);
+            _movementTween.onComplete += Explode;
+            _movementTween.onComplete += () => PlayExplosionVFX();
         }
         
         #endregion
@@ -264,14 +268,19 @@ namespace Objects
 
         private Tween MergeMove(Vector3 position, int index)
         {
-            var particleSystemMain = explosionVFX.main;
-            particleSystemMain.startColor = spriteRenderer.color;
-            particleSystemMain.startDelay = index * GameData.Instance.BubbleData.ExplosionVFXDelay;
-            explosionVFX.Play();
+            PlayExplosionVFX();
             
             _movementTween?.Kill();
             _movementTween = transform.DOMove(position, GameData.Instance.BubbleData.MergeDuration);
             return _movementTween;
+        }
+
+        private void PlayExplosionVFX(int index = 0)
+        {
+            var particleSystemMain = explosionVFX.main;
+            particleSystemMain.startColor = spriteRenderer.color;
+            particleSystemMain.startDelay = index * GameData.Instance.BubbleData.ExplosionVFXDelay;
+            explosionVFX.Play();
         }
         
         private void SetColliderActive(bool isActive)
