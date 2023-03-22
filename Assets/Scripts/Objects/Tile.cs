@@ -16,6 +16,7 @@ namespace Objects
         [SerializeField] private SpriteRenderer spriteRenderer_2;
         [SerializeField] private CircleCollider2D circleCollider;
         [SerializeField, ReadOnly] private List<Tile> neighbours = new List<Tile>();
+        
         private Bubble _bubble;
         private bool _isTopTile;
 
@@ -140,7 +141,7 @@ namespace Objects
         private void SetColliderActive(bool isActive)
         {
             // Debug.Log(gameObject.name + "SetColliderActive: " + isActive);
-            if (_isTopTile) isActive = true;
+            // if (_isTopTile) isActive = true;
             circleCollider.enabled = isActive;
             spriteRenderer_2.gameObject.SetActive(isActive);
         }

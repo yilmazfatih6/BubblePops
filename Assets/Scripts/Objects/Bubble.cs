@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using DG.Tweening;
 using Lean.Pool;
+using Managers;
 using ScriptableObjects;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -27,7 +28,6 @@ namespace Objects
 
         [SerializeField] private TextMeshPro textMeshPro;
         [SerializeField] private SpriteRenderer spriteRenderer;
-        [SerializeField] private SpriteRenderer spriteRendererBlack;
         [SerializeField] private CircleCollider2D circleCollider;
         [SerializeField] private ParticleSystem explosionVFX;
         [SerializeField] private TrailRenderer trailRenderer;
@@ -62,7 +62,6 @@ namespace Objects
         {
             spriteRenderer.enabled = true;
             textMeshPro.enabled = true;
-            spriteRendererBlack.enabled = false;
             trailRenderer.emitting = false;
         }
 
@@ -183,7 +182,7 @@ namespace Objects
                     var index = i;
                     tween.OnComplete(() =>
                     {
-                        bubbles[index].Explode();
+                        bubbles[index].Explode(index);
                     });
                 }
             }
@@ -195,7 +194,7 @@ namespace Objects
             targetPosition.y = BubbleShooter.Instance.Barrel.transform.position.y;
 
             Move(targetPosition, GameData.Instance.BubbleData.FallSpeed, GameData.Instance.BubbleData.FallEase);
-            _movementTween.onComplete += Explode;
+            _movementTween.onComplete += () => Explode();
             _movementTween.onComplete += () => PlayExplosionVFX();
         }
         
@@ -216,21 +215,6 @@ namespace Objects
             }
         }
 
-        // private List<Bubble> GetMergeBubbles()
-        // {
-        //     var bubbles = new List<Bubble> { this };
-        //     foreach (var neighbourTile in _tile.Neighbours)
-        //     {
-        //         if(neighbourTile.Bubble == null) continue;
-        //         if(_number != neighbourTile.Bubble._number) continue;
-        //         if(bubbles.Contains(neighbourTile.Bubble)) continue;
-        //         
-        //         bubbles.Add(neighbourTile.Bubble);
-        //         neighbourTile.Bubble.GetMergeBubbles(bubbles);
-        //     }
-        //     return bubbles;
-        // }
-
         private void BumpUp(int newNumber)
         {
             _number = newNumber;
@@ -244,13 +228,15 @@ namespace Objects
             if (_number == GameData.Instance.BubbleData.Colors.Last().Key)
             {
                 Explode();
-                foreach (var neighbour in _tile.Neighbours)
+                for (var index = 0; index < _tile.Neighbours.Count; index++)
                 {
+                    var neighbour = _tile.Neighbours[index];
                     if (neighbour.Bubble)
                     {
-                        neighbour.Bubble.Explode();
+                        neighbour.Bubble.Explode(index);
                     }
                 }
+
                 BubbleShooter.Instance.ReadyForNextShot();
             }
             else
@@ -259,13 +245,7 @@ namespace Objects
                 CheckForMerge();
             }
         }
-
-        [Button]
-        private void Debug_Bump()
-        {
-            BumpUp(_number + 1);
-        }
-
+        
         private Tween MergeMove(Vector3 position, int index)
         {
             PlayExplosionVFX();
@@ -279,7 +259,7 @@ namespace Objects
         {
             var particleSystemMain = explosionVFX.main;
             particleSystemMain.startColor = spriteRenderer.color;
-            particleSystemMain.startDelay = index * GameData.Instance.BubbleData.ExplosionVFXDelay;
+            particleSystemMain.startDelay = index * GameData.Instance.BubbleData.ExplosionFXDelay;
             explosionVFX.Play();
         }
         
@@ -288,7 +268,7 @@ namespace Objects
             circleCollider.enabled = isActive;
         }
 
-        private void Explode()
+        private void Explode(int index = 0)
         {
             if (!gameObject.activeSelf) return;
             _tile.ResetBubble();
@@ -296,7 +276,8 @@ namespace Objects
             
             spriteRenderer.enabled = false;
             textMeshPro.enabled = false;
-            LeanPool.Despawn(this, 2);
+            LeanPool.Despawn(this, GameData.Instance.BubbleData.DespawnDelay);
+            AudioManager.Instance.PlayClip(GameData.Instance.BubbleData.PopSound, index * GameData.Instance.BubbleData.ExplosionFXDelay);
             OnExploded?.Invoke(this);
         }
 
@@ -323,6 +304,16 @@ namespace Objects
                 }
             }
         }
+        #endregion
+        
+        #region Debug
+        
+        [Button]
+        private void Debug_Bump()
+        {
+            BumpUp(_number + 1);
+        }
+        
         #endregion
     }
 }

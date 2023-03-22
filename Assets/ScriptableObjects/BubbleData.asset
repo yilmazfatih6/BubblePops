@@ -28,6 +28,7 @@ MonoBehaviour:
     - {r: 0.43614274, g: 0.9339623, b: 0.7966561, a: 1}
   magazineScale: 0.8
   movementSpeed: 15
+  fallSpeed: 10
   pathMovementEase:
     serializedVersion: 2
     m_Curve:
@@ -49,6 +50,30 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0.045705616
       outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  fallEase:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.47667962
+      outSlope: 0.47667962
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.15753776
+    - serializedVersion: 3
+      time: 1.0015869
+      value: 1
+      inSlope: 2.215616
+      outSlope: 2.215616
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.04285247
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4

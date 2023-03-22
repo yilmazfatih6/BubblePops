@@ -62,14 +62,14 @@ namespace Objects
 
             if (Input.GetMouseButtonDown(0))
             {
-                // _hitTile = null;
+                _hitTile = null;
                 _isInputDown = true;
                 lineRenderer.positionCount = 1;
                 lineRenderer.SetPosition(0, barrel.position);
                 lineRenderer.enabled = true;
             }
 
-            if (Input.GetMouseButtonUp(0))
+            else if (Input.GetMouseButtonUp(0))
             {
                 _isInputDown = false;
                 lineRenderer.enabled = false;
@@ -205,6 +205,7 @@ namespace Objects
                 index += 1;
                 if (index >= _pathPositions.Count)
                 {
+                    AudioManager.Instance.PlayClip(GameData.Instance.BubbleData.PlacementSound);
                     BubbleSpawner.Instance.FirstShotBubble.SetTrailActive(false);
                     BubbleSpawner.Instance.PoolBubbles.Add(BubbleSpawner.Instance.FirstShotBubble);
                     BubbleSpawner.Instance.FirstShotBubble.WiggleNeighbours();
