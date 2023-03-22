@@ -120,7 +120,7 @@ namespace Objects
             trailRenderer.emitting = isActive;
         }
 
-        public void SetTile(Tile tile, Vector3[] pathPositions = null)
+        public void SetTile(Tile tile)
         {
             _tile = tile;
             _tile.SetBubble(this);
@@ -192,7 +192,9 @@ namespace Objects
         {
             var targetPosition = transform.position;
             targetPosition.y = BubbleShooter.Instance.Barrel.transform.position.y;
-
+            
+            _tile.ResetBubble();
+            
             Move(targetPosition, GameData.Instance.BubbleData.FallSpeed, GameData.Instance.BubbleData.FallEase);
             _movementTween.onComplete += () => Explode();
             _movementTween.onComplete += () => PlayExplosionVFX();
@@ -271,8 +273,9 @@ namespace Objects
         private void Explode(int index = 0)
         {
             if (!gameObject.activeSelf) return;
-            _tile.ResetBubble();
             // Debug.Log("Explode: " + this.name);
+            
+            _tile.ResetBubble();
             
             spriteRenderer.enabled = false;
             textMeshPro.enabled = false;

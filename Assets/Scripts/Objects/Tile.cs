@@ -49,15 +49,20 @@ namespace Objects
             _bubble = bubble;
 
             SetColliderActive(false);
-
-            foreach (var neighbour in neighbours)
-                if(neighbour.Bubble == null) neighbour.SetColliderActive(true);
+            SetNeighbourColliders();
         }
 
         public void ResetBubble()
         {
+            if (_bubble == null) return;
+            
             _bubble = null;
             CheckAndSetCollider();
+
+            foreach (var neighbour in neighbours)
+            {
+                neighbour.CheckAndSetCollider();
+            }
         }
 
         public void SetText(string text)
@@ -123,6 +128,12 @@ namespace Objects
         // Disable tile collider if doesn't have any neighbour with bubble. Enable otherwise
         private void CheckAndSetCollider()
         {
+            if (_bubble != null)
+            {
+                SetColliderActive(false);
+                return;
+            }
+            
             var hasAnyNeighbourWithBubble = false;
             
             foreach (var neighbour in neighbours)
@@ -133,8 +144,7 @@ namespace Objects
                     break;
                 }
             }
-                        
-            // Debug.Log(name + " hasAnyNeighbourWithBubble " + hasAnyNeighbourWithBubble);
+            
             SetColliderActive(hasAnyNeighbourWithBubble);
         } 
         
@@ -144,6 +154,12 @@ namespace Objects
             // if (_isTopTile) isActive = true;
             circleCollider.enabled = isActive;
             spriteRenderer_2.gameObject.SetActive(isActive);
+        }
+
+        private void SetNeighbourColliders()
+        {
+            foreach (var neighbour in neighbours)
+                neighbour.SetColliderActive(neighbour.Bubble == null);
         }
 
         #endregion

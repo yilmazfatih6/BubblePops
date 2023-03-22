@@ -27,6 +27,7 @@ MonoBehaviour:
     - {r: 0.9339623, g: 0.41852084, b: 0.41852084, a: 1}
     - {r: 0.43614274, g: 0.9339623, b: 0.7966561, a: 1}
   magazineScale: 0.8
+  despawnDelay: 2
   movementSpeed: 15
   fallSpeed: 10
   pathMovementEase:
@@ -80,4 +81,6 @@ MonoBehaviour:
   wiggleDuration: 0.1
   wiggleDistanceMultiplier: 0.1
   mergeDuration: 0.25
-  explosionVFXDelay: 0.1
+  explosionFXDelay: 0.05
+  popSound: {fileID: 8300000, guid: 34424980282019f49b397f4c6e14d967, type: 3}
+  placementSound: {fileID: 8300000, guid: 9ff2c67c4683c0349b84f63b54a67b97, type: 3}

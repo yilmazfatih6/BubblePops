@@ -85,7 +85,7 @@ namespace Managers
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    Bubble bubble = Lean.Pool.LeanPool.Spawn(bubblePrefab);
+                    Bubble bubble = Lean.Pool.LeanPool.Spawn(bubblePrefab, transform);
                     _poolBubbles.Add(bubble);
 
                     var tile = TileSpawner.Instance.Tiles[i, j];
