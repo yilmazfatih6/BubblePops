@@ -1536,7 +1536,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f66cec3bffd0fae4d928d42943b0532b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rows: 9
+  rows: 8
   columns: 6
   offset: 0.5
   cellSize: 1

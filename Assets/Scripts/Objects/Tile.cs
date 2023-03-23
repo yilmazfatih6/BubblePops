@@ -26,6 +26,7 @@ namespace Objects
 
         public Bubble Bubble => _bubble;
         public List<Tile> Neighbours => neighbours;
+        public TextMeshPro TextMeshPro => textMeshPro;
 
         #endregion
 
@@ -121,12 +122,9 @@ namespace Objects
                 bubbles.Remove(neighbour.Bubble);
             }
         }
-        #endregion
-
-        #region Private Methods
-
+        
         // Disable tile collider if doesn't have any neighbour with bubble. Enable otherwise
-        private void CheckAndSetCollider()
+        public void CheckAndSetCollider()
         {
             if (_bubble != null)
             {
@@ -148,18 +146,21 @@ namespace Objects
             SetColliderActive(hasAnyNeighbourWithBubble);
         } 
         
+        public void SetNeighbourColliders()
+        {
+            foreach (var neighbour in neighbours)
+                neighbour.SetColliderActive(neighbour.Bubble == null);
+        }
+        #endregion
+
+        #region Private Methods
+
         private void SetColliderActive(bool isActive)
         {
             // Debug.Log(gameObject.name + "SetColliderActive: " + isActive);
             // if (_isTopTile) isActive = true;
             circleCollider.enabled = isActive;
             spriteRenderer_2.gameObject.SetActive(isActive);
-        }
-
-        private void SetNeighbourColliders()
-        {
-            foreach (var neighbour in neighbours)
-                neighbour.SetColliderActive(neighbour.Bubble == null);
         }
 
         #endregion

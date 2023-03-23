@@ -79,6 +79,7 @@ namespace Objects
                 _tile = tile;
                 transform.position = _tile.transform.position;
                 _tile.SetBubble(this);
+                transform.SetParent(_tile.transform);
             }
 
             var color = GameData.Instance.BubbleData.Colors[number];
@@ -130,6 +131,7 @@ namespace Objects
             _tile = tile;
             _tile.SetBubble(this);
             SetColliderActive(true);
+            transform.SetParent(_tile.transform);
         }
         
         public void CheckForMerge()
@@ -142,7 +144,7 @@ namespace Objects
             if (bubbles.Count <= 1)
             {
                 OnMergeNotFound?.Invoke(this);
-                BubbleShooter.Instance.ReadyForNextShot();
+                BubbleShooter.Instance.CheckTiles();
                 return;
             }
             
@@ -197,12 +199,25 @@ namespace Objects
         {
             var targetPosition = transform.position;
             targetPosition.y = BubbleShooter.Instance.Barrel.transform.position.y;
-            
-            _tile.ResetBubble();
-            
+
+            if (_tile)
+            {
+                _tile.ResetBubble();
+                _tile = null;
+            }
+
             Move(targetPosition, GameData.Instance.BubbleData.FallSpeed, GameData.Instance.BubbleData.FallEase);
             _movementTween.onComplete += () => Explode();
             _movementTween.onComplete += () => PlayExplosionVFX();
+        }
+
+        public void Despawn()
+        {
+            if (!gameObject.activeSelf) return;
+            _tile = null;
+            spriteRenderer.enabled = false;
+            textMeshPro.enabled = false;
+            LeanPool.Despawn(this);
         }
         
         #endregion
@@ -234,7 +249,6 @@ namespace Objects
             // On max number is reached explode neighbours and self
             if (_number == GameData.Instance.BubbleData.Colors.Last().Key)
             {
-                Explode();
                 for (var index = 0; index < _tile.Neighbours.Count; index++)
                 {
                     var neighbour = _tile.Neighbours[index];
@@ -243,8 +257,9 @@ namespace Objects
                         neighbour.Bubble.Explode(index);
                     }
                 }
+                Explode();
 
-                BubbleShooter.Instance.ReadyForNextShot();
+                BubbleShooter.Instance.CheckTiles();
             }
             else
             {
@@ -278,10 +293,16 @@ namespace Objects
         private void Explode(int index = 0)
         {
             if (!gameObject.activeSelf) return;
-            // Debug.Log("Explode: " + this.name);
-            
-            _tile.ResetBubble();
-            
+
+            // Debug.Log(gameObject + " Bubble -> Explode", gameObject);
+
+            if (_tile)
+            {
+             
+                _tile.ResetBubble();
+                _tile = null;
+            }
+
             spriteRenderer.enabled = false;
             textMeshPro.enabled = false;
             LeanPool.Despawn(this, GameData.Instance.BubbleData.DespawnDelay);
@@ -295,7 +316,7 @@ namespace Objects
             _movementTween?.Kill();
             // Debug.Log(gameObject.name + "Kill Movement Tween", gameObject);
             var distance = (transform.position - bubble.transform.position) * GameData.Instance.BubbleData.WiggleDistanceMultiplier;
-            _movementTween = transform.DOMove(duration: GameData.Instance.BubbleData.WiggleDuration, endValue: distance)
+            _movementTween = transform.DOLocalMove(duration: GameData.Instance.BubbleData.WiggleDuration, endValue: distance)
                 .SetRelative()
                 .SetLoops(2, LoopType.Yoyo);
         }

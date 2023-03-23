@@ -11,6 +11,22 @@ namespace ScriptableObjects
         [SerializeField, InlineEditor()] private BubbleData bubbleData;
         public BubbleData BubbleData => bubbleData;
 
+        #region Grid
+
+        [SerializeField] private float cellSize = 1f;
+        [SerializeField] private float gridOffset = 1f;
+        [SerializeField] private int gridRows = 8;
+        [SerializeField] private int gridColumns = 6;
+        [SerializeField] private float tileMovementDuration = 1f;
+
+        public float CellSize => cellSize;
+        public float TileMovementDuration => tileMovementDuration;
+        public int GridRows => gridRows;
+        public int GridColumns => gridColumns;
+        public float GridOffset => gridOffset;
+
+        #endregion
+        
         #region Tile Data
 
         [TitleGroup("Tile Data")]

@@ -13,9 +13,14 @@ MonoBehaviour:
   m_Name: GameData
   m_EditorClassIdentifier: 
   bubbleData: {fileID: 11400000, guid: 0d9d0fe52c204c445b06c3adf8792ade, type: 2}
+  cellSize: 1
+  gridOffset: 0.5
+  gridRows: 8
+  gridColumns: 6
+  tileMovementDuration: 0.25
   tileOpacity: 0.5
   tileColorAnimationDuration: 0.2
-  initialRowCount: 4
+  initialRowCount: 2
   maxBubbleExponent: 5
   poolClearMessage: Perfect!
   bubblePopTextDuration: 0.5

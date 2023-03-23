@@ -71,15 +71,31 @@ namespace Managers
             FirstShotBubble.ResetScale();
             SpawnShotBubble(1);
         }
-        
+
+        public void SpawnBubblesToBottom()
+        {
+            var columns = GameData.Instance.GridColumns;
+            var rows = GameData.Instance.GridRows;
+
+            for (int j = 0; j < columns; j++)
+            {
+                Bubble bubble = Lean.Pool.LeanPool.Spawn(bubblePrefab, transform);
+                _poolBubbles.Add(bubble);
+
+                var tile = TileSpawner.Instance.Tiles[0][j];
+                bubble.InjectData(tile: tile, number: Random.Range(1, GameData.Instance.MaxBubbleExponent));
+                
+            }
+        }
+
         #endregion
 
         #region Private Methods
 
         private void SpawnPoolBubbles()
         {
-            var rows = GridGenerator.Instance.Rows;
-            var columns = GridGenerator.Instance.Columns;
+            var columns = GameData.Instance.GridColumns;
+            var rows = GameData.Instance.GridRows;
 
             for (int i = rows - 1; i >= rows - GameData.Instance.InitialRowCount; i--)
             {
@@ -88,8 +104,7 @@ namespace Managers
                     Bubble bubble = Lean.Pool.LeanPool.Spawn(bubblePrefab, transform);
                     _poolBubbles.Add(bubble);
 
-                    var tile = TileSpawner.Instance.Tiles[i, j];
-            
+                    var tile = TileSpawner.Instance.Tiles[i][j];
                     bubble.InjectData(tile: tile, number: Random.Range(1, GameData.Instance.MaxBubbleExponent));
                     
                 }

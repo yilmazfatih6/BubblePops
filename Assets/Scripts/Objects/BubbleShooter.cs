@@ -24,7 +24,6 @@ namespace Objects
         private Vector2 _direction = Vector2.zero;
         private Vector3 _barrelRotation;
         private Tile _hitTile;
-        private Bubble _currentBubble;
         private bool _isInputDown;
         private bool _canShoot = true;
         RaycastHit2D[] _results = new RaycastHit2D[10];
@@ -90,12 +89,28 @@ namespace Objects
         
         #region Public Methods
 
-        public void ReadyForNextShot()
+        public void CheckTiles()
         {
             BubbleBreaker.Instance.Break();
-            BubbleSpawner.Instance.SpawnNewShotBubble();
-            _canShoot = true;
-            ResetProperties();
+            
+            // Debug.Log("BubbleShooter -> TileSpawner.Instance.IsRowEmpty(5): " + TileSpawner.Instance.IsRowEmpty(5));
+
+            // check rows. add or remove
+            if (!TileSpawner.Instance.IsRowEmpty(0))
+            {
+                var tween = TileSpawner.Instance.RemoveRow();
+                tween.onComplete += ReadyForNextShot;
+            }
+            else if (TileSpawner.Instance.IsRowEmpty(2))
+            {
+                var tween = TileSpawner.Instance.AddRow();
+                tween.onComplete += ReadyForNextShot;
+            }
+            else
+            {
+                ReadyForNextShot();
+            }
+            
         }
         
         #endregion
@@ -232,6 +247,13 @@ namespace Objects
             lineRenderer.positionCount = 1;
             lineRenderer.SetPosition(0, barrel.position);
             lineRenderer.enabled = true;
+        }
+
+        private void ReadyForNextShot()
+        {
+            BubbleSpawner.Instance.SpawnNewShotBubble();
+            _canShoot = true;
+            ResetProperties();
         }
         #endregion
     }
