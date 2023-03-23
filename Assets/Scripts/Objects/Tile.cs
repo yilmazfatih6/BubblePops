@@ -158,7 +158,7 @@ namespace Objects
         private void SetColliderActive(bool isActive)
         {
             // Debug.Log(gameObject.name + "SetColliderActive: " + isActive);
-            // if (_isTopTile) isActive = true;
+            if (_isTopTile && _bubble == null) isActive = true;
             circleCollider.enabled = isActive;
             spriteRenderer_2.gameObject.SetActive(isActive);
         }

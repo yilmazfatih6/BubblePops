@@ -20,7 +20,7 @@ MonoBehaviour:
   tileMovementDuration: 0.25
   tileOpacity: 0.5
   tileColorAnimationDuration: 0.2
-  initialRowCount: 2
+  initialRowCount: 3
   maxBubbleExponent: 5
   poolClearMessage: Perfect!
   bubblePopTextDuration: 1

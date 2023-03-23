@@ -111,6 +111,10 @@ namespace Managers
             {
                 #region Swap Tiles
 
+                // Reset top tile flag
+                foreach (var tile in _tiles[rows - 1])
+                    tile.SetTopTile(false);
+                
                 // Swap tiles.
                 var temp = new Tile[columns];
                 _tiles[0].CopyTo(temp, 0);
@@ -121,6 +125,10 @@ namespace Managers
                 }
             
                 _tiles[rows - 1] = temp;
+                
+                // Reset top tile flag
+                foreach (var tile in _tiles[rows - 1])
+                    tile.SetTopTile(true);
 
                 #endregion
 
@@ -193,6 +201,10 @@ namespace Managers
                 
                 #region Swap tiles
 
+                // Reset top tile flag
+                foreach (var tile in _tiles[rows - 1])
+                    tile.SetTopTile(false);
+                
                 // Swap tiles.
                 var temp = new Tile[columns];
                 _tiles[rows - 1].CopyTo(temp, 0);
@@ -203,6 +215,10 @@ namespace Managers
                 }
             
                 _tiles[0] = temp;
+                
+                // Reset top tile flag
+                foreach (var tile in _tiles[rows - 1])
+                    tile.SetTopTile(true);
                 
                 #endregion
 
