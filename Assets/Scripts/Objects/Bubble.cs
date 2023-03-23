@@ -208,6 +208,8 @@ namespace Objects
                 _tile = null;
             }
 
+            SetColliderActive(false);
+            
             Move(targetPosition, GameData.Instance.BubbleData.FallSpeed, GameData.Instance.BubbleData.FallEase);
             _movementTween.onComplete += () => Explode();
             _movementTween.onComplete += () => PlayExplosionVFX();
@@ -299,11 +301,10 @@ namespace Objects
         {
             if (!gameObject.activeSelf) return;
 
-            // Debug.Log(gameObject + " Bubble -> Explode", gameObject);
+            SetColliderActive(false);
 
             if (_tile)
             {
-             
                 _tile.ResetBubble();
                 _tile = null;
             }
