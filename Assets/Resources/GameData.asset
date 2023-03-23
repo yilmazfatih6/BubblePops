@@ -23,8 +23,8 @@ MonoBehaviour:
   initialRowCount: 2
   maxBubbleExponent: 5
   poolClearMessage: Perfect!
-  bubblePopTextDuration: 0.5
-  bubblePopTextMovement: 1
+  bubblePopTextDuration: 1
+  bubblePopTextMovement: 2
   gameStartAudio: {fileID: 8300000, guid: 407728b5ff0ba0a429dd8b07bc86cf25, type: 3}
   bubblePlacementAudio: {fileID: 8300000, guid: 9ff2c67c4683c0349b84f63b54a67b97, type: 3}
   bubblePopAudio: {fileID: 8300000, guid: 34424980282019f49b397f4c6e14d967, type: 3}

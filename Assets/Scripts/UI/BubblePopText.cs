@@ -22,6 +22,10 @@ namespace UI
         {
             text.text = str;
 
+            // Scale up
+            transform.localScale = Vector3.one;
+            transform.DOScale(1.2f, GameData.Instance.BubblePopTextDuration);
+            
             // Make relative movement.
             transform.DOMoveY(GameData.Instance.BubblePopTextMovement, GameData.Instance.BubblePopTextDuration).SetRelative();
 

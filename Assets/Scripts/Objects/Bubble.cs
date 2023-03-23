@@ -28,6 +28,7 @@ namespace Objects
 
         [SerializeField] private TextMeshPro textMeshPro;
         [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private SpriteRenderer spriteRendererShadow;
         [SerializeField] private CircleCollider2D circleCollider;
         [SerializeField] private ParticleSystem explosionVFX;
         [SerializeField] private TrailRenderer trailRenderer;
@@ -61,6 +62,7 @@ namespace Objects
         private void OnEnable()
         {
             spriteRenderer.enabled = true;
+            spriteRendererShadow.enabled = true;
             textMeshPro.enabled = true;
             trailRenderer.emitting = false;
         }
@@ -216,6 +218,7 @@ namespace Objects
             if (!gameObject.activeSelf) return;
             _tile = null;
             spriteRenderer.enabled = false;
+            spriteRendererShadow.enabled = false;
             textMeshPro.enabled = false;
             LeanPool.Despawn(this);
         }
@@ -245,6 +248,8 @@ namespace Objects
 
             var spawned = LeanPool.Spawn(bubblePopText, transform.position, transform.rotation);
             spawned.InjectData(textMeshPro.text);
+
+            NotificationText.Instance.DisplayBumpUp();
             
             // On max number is reached explode neighbours and self
             if (_number == GameData.Instance.BubbleData.Colors.Last().Key)
@@ -304,6 +309,7 @@ namespace Objects
             }
 
             spriteRenderer.enabled = false;
+            spriteRendererShadow.enabled = false;
             textMeshPro.enabled = false;
             LeanPool.Despawn(this, GameData.Instance.BubbleData.DespawnDelay);
             AudioManager.Instance.PlayClip(GameData.Instance.BubblePopAudio, index * GameData.Instance.BubbleData.ExplosionFXDelay);
